@@ -96,7 +96,16 @@
             class="form-control"
             rows="3"
             [(ngModel)]="userSettings.notes"
+            #notesField="ngModel"
+            [class.field-error]="form.submitted && notesField.invalid"
+            required
           ></textarea>
+          <div
+            [hidden]="!form.submitted || notesField.valid"
+            class="alert alert-danger"
+          >
+            Notes required
+          </div>
         </div>
         <button class="btn btn-primary">send</button>
       </form>
