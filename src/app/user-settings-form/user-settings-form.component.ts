@@ -1,6 +1,8 @@
 import { IUserSettings } from './../data/user-settings';
 import { Component, OnInit } from '@angular/core';
 import { NgForm, NgModel } from '@angular/forms';
+import { DataService } from '../data/data.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-user-settings-form',
@@ -15,16 +17,37 @@ export class UserSettingsFormComponent implements OnInit {
     subscriptionType: null,
     notes: null
   };
-
   userSettings: IUserSettings = { ...this.originalUserSettings };
-  constructor() {}
+  subscriptionTypes: Observable<string[]>;
+  postError: boolean = false;
+  postErrorMessage: string;
 
-  ngOnInit() {}
+  constructor(private dataService: DataService) {}
+
+  ngOnInit() {
+    this.subscriptionTypes = this.dataService.getSubscriptionTypes();
+  }
 
   onBlur(nameField: NgModel) {
     console.log('On Blur: ' + nameField.valid);
   }
+  handleHttpError(errorResponse: any) {
+    console.log('error :', errorResponse);
+    this.postError = true;
+    this.postErrorMessage = errorResponse.error.errorMessage;
+  }
   onSubmit(form: NgForm) {
     console.log(form.valid);
+    if (form.valid) {
+      this.dataService
+        .postUserSettingsForm(this.userSettings)
+        .subscribe(
+          result => console.log('success ', result),
+          error => this.handleHttpError(error)
+        );
+    } else {
+      this.postError = true;
+      this.postErrorMessage = ' Please fix the above errors';
+    }
   }
 }
