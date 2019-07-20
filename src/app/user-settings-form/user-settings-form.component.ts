@@ -22,10 +22,18 @@ export class UserSettingsFormComponent implements OnInit {
   postError: boolean = false;
   postErrorMessage: string;
 
+  singleModel: string = 'On';
+  startDate: Date;
+  startTime: Date;
+  userRating: number = 0;
+  maxRating: number = 10;
+
   constructor(private dataService: DataService) {}
 
   ngOnInit() {
     this.subscriptionTypes = this.dataService.getSubscriptionTypes();
+    this.startDate = new Date();
+    this.startTime = new Date();
   }
 
   onBlur(nameField: NgModel) {
